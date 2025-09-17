@@ -184,23 +184,34 @@ class TicTacToeGame:
         self.turnnumber += 1
         self.alpha = -math.inf
         self.beta = math.inf
-        
+
         self.gameboard.print_bd()
 
         if self.turn == 1:
             print("Human, please choose a space!")
-            validinput = False
-            
-            user_input = input("Enter two numbers separated by a comma: ")
-            humanrow, humancol = map(int, map(str.strip, user_input.split(',')))
-    
-                 
-            self.gameboard.entries[humanrow][humancol] = 1
-            self.turn = 2
+            while True:
+                try:
+                    user_input = input("Enter two numbers separated by a comma (row,col): ")
+                    humanrow, humancol = map(int, map(str.strip, user_input.split(',')))
+
+                    if humanrow not in [0, 1, 2] or humancol not in [0, 1, 2]:
+                        print("Invalid input: Row and column must be between 0 and 2. Try again.")
+                        continue
+
+                    if self.gameboard.entries[humanrow][humancol] != 0:
+                        print("Invalid move: That space is already taken. Choose another one.")
+                        continue
+
+                    self.gameboard.entries[humanrow][humancol] = 1
+                    self.turn = 2
+                    break
+
+                except ValueError:
+                    print("Invalid input format. Please enter two numbers separated by a comma, like '1,2'.")
+
         else:
             print("AI is thinking...")
-            #move, score = self.gameboard.minmax(self.gameboard.entries)
-            move, score = self.gameboard.alphabeta(self.gameboard.entries,self.alpha,self.beta)
+            move, score = self.gameboard.alphabeta(self.gameboard.entries, self.alpha, self.beta)
             print("AI chooses move: ", move, " with score: ", score)
             self.gameboard.entries[move[0]][move[1]] = 2
             self.turn = 1
